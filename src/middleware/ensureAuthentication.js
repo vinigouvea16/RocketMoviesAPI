@@ -8,9 +8,9 @@ function ensureAuthentication(request, response, next){
   if(!authHeader){
     throw new AppError("Unknown JWT Token", 401);
   }
-
-  const [,token] = authHeader.split("");
-
+  
+  const [,token] = authHeader.split(" ");
+  
   try{
     const { sub:user_id } = verify(token, authConfig.jwt.secret);
     request.user = {
