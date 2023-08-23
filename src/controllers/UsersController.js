@@ -33,27 +33,27 @@ class UsersController {
     const user = await database.get("SELECT * FROM users WHERE id = (?)", [user_id]);
 
     if(!user){
-      throw new AppError("Usuário não encontrado");
+      throw new AppError("User not found");
     }
 
     const userWithUpdatedEmail = await database.get("SELECT * FROM users WHERE email = (?)", [email]);
 
     if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user.id){
-      throw new AppError("Este e-mail já está em uso.");
+      throw new AppError("This e-mail is someone else's");
     }
 
     user.name = name ?? user.name;
     user.email = email ?? user.email;
 
     if(password && !old_password){
-      throw new AppError("Você precisa informar a senha antiga para definir a nova senha")
+      throw new AppError("You need to enter the old password to set the new password.")
     }
 
     if(password && old_password){
       const checkOldPassword = await compare(old_password, user.password);
     
       if(!checkOldPassword){
-        throw new AppError("Senha antiga não confere.");
+        throw new AppError("Old password doesn't match.");
       }
 
       user.password = await hash(password, 8);
